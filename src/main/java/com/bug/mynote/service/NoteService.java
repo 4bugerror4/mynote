@@ -17,8 +17,8 @@ public class NoteService {
 	private final NoteRepository noteRepository;
 	
 	@Transactional(readOnly = true)
-	public List<Note> getNoteAll() {
-		return noteRepository.findAll();
+	public List<Note> getNotes(String searchText) {
+		return noteRepository.findByTitleContainingOrContentContaining(searchText, searchText);
 	}
 	
 	@Transactional(readOnly = true)

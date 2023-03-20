@@ -1,7 +1,7 @@
 package com.bug.mynote.service;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,18 +17,20 @@ public class BoardService {
 	private final BoardRepository boardRepository;
 	
 	@Transactional(readOnly = true)
-	public List<Board> getNoteAll() {
-		return boardRepository.findAll();
+	public Page<Board> getBoardAll(Pageable pageable, String searchText) {
+		Page<Board> boards = boardRepository.findByTitleContainingOrContentContaining(pageable, searchText, searchText);
+		
+		return boards;
 	}
 	
 	@Transactional(readOnly = true)
-	public Board getNote(Long id) {
+	public Board getBoard(Long id) {
 		return boardRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 아이디의 게시글은 존재하지 않습니다."));
 	}
 	
 	@Transactional
-	public Board save(Board note) {
-		return boardRepository.save(note);
+	public Board save(Board board) {
+		return boardRepository.save(board);
 	}
 	
 	@Transactional

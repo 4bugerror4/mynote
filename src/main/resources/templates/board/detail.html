@@ -19,44 +19,56 @@
 		<h1 class="text-center mt-5">게시판 쓰기</h1>
 
 		<div class="mb-3">
-			<label for="title" class="form-label">제목</label>
-			<input type="text" class="form-control" id="title">
+			<input type="hidden" id="id" th:value="${board.id}" />
+			<h5>제목</h5>
+			<div th:text="${board.title}"></div>
 		</div>
+		<hr />
 		<div class="mb-3">
-			<label for="content" class="form-label">내용</label>
-			<textarea class="form-control summernote" id="content" rows="10"></textarea>
+			<h5>내용</h5>
+			<div th:utext="${board.content}"></div>
 		</div>
+		<hr />
 		<div class="text-end">
-			<button type="button" class="btn btn-warning">수정</button>
-			<button type="button" class="btn btn-danger">삭제</button>
-			<a th:href="@{/normal/board}" class="btn btn-secondary">돌아가기</a>
+			<a th:href="@{/normal/board/update/{id}(id = ${board.id})}" class="btn btn-warning">수정</a>
+			<button type="button" class="btn btn-danger" th:onclick="normalBoardDelete()">삭제</button>
+			<a th:href="@{/board/normal}" class="btn btn-secondary">돌아가기</a>
 		</div>
 		
+		<div class="card mt-5 mb-3">
+			<div class="card-body">
+				<textarea id="replyContent" rows="1" class="form-control"></textarea>
+			</div>
+			<div class="card-footer text-end">
+				<button class="btn btn-primary" type="button" th:onclick="replySave()">등록</button>
+			</div>
+		</div>
 		<!-- 댓글 -->
 		<div class="card my-3">
 			<div class="card-header">댓글 리스트</div>
 			<!-- 본 댓글 -->
 			<ul class="list-group list-group-flush">
-				<li class="list-group-item">
+				<li class="list-group-item" th:each="reply : ${board.replys}">
 					<div class="d-flex justify-content-between">
-						<div style="display: inline-block;">댓글 내용</div>
+						<input type="hidden" id="replyId" th:value="${reply.id}" />
+						<div style="display: inline-block;" th:text="${reply.content}">댓글 내용</div>
 						<div style="display: inline-block;">
-							<span>작성자 : <span>어드민</span></span>
-							<button class="badge btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#cReply1" aria-expanded="false" aria-controls="collapseExample">댓글</button>
-							<button class="badge btn btn-danger">삭제</button>
+							<span>작성자 : <span th:text="${reply.user.username}">어드민</span></span>
+							<button class="badge btn btn-primary" type="button" data-bs-toggle="collapse" th:data-bs-target="|#cReply${reply.id}|" aria-expanded="false" aria-controls="collapseExample">댓글</button>
+							<button class="badge btn btn-danger" th:replyId="${reply.id}" th:onclick="replyDelete(this.getAttribute('replyId'))">삭제</button>
 						</div>
 					</div>
-					<div class="collapse my-2" id="cReply1">
+					<div class="collapse my-2" th:id="|cReply${reply.id}|">
 					    <div class="card card-body">
 					    	<div class="row">
-						        <input type="text" class="col-11" />
-						        <button type="button" class="col-1 badge btn btn-info">작성</button>
+						        <input type="text" class="col-11" th:id="|childContent${reply.id}|" />
+						        <button type="button" class="col-1 badge btn btn-info" th:replyId="${reply.id}" th:onclick="childReplySave(this.getAttribute('replyId'))">작성</button>
 					        </div>
 					    </div>
 					</div>
 					<!-- 답글 -->
-					<ul class="list-group list-group-flush">
-						<li class="list-group-item">ㄴ <span class="me-5">대댓글 내용입니다.</span><span>작성자: <span>어드민</span></span></li>
+					<ul class="list-group list-group-flush" th:each="cReply : ${reply.cReplys}">
+						<li class="list-group-item">ㄴ <span class="me-5" th:text="${cReply.content}">대댓글 내용입니다.</span><span>작성자: <span th:text="${cReply.user.username}">어드민</span></span></li>
 					</ul>
 					<!-- //답글 -->
 					
@@ -64,41 +76,11 @@
 			</ul>
 			<!-- //본 댓글 -->
 			
-			<!-- 본 댓글 -->
-			<ul class="list-group list-group-flush">
-				<li class="list-group-item">
-					<div class="d-flex justify-content-between">
-						<div style="display: inline-block;">댓글 내용</div>
-						<div style="display: inline-block;">
-							<span>작성자 : <span>어드민</span></span>
-							<button class="badge btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#cReply2" aria-expanded="false" aria-controls="collapseExample">댓글</button>
-							<button class="badge btn btn-danger">삭제</button>
-						</div>
-					</div>
-					<div class="collapse my-2" id="cReply2">
-					    <div class="card card-body">
-					    	<div class="row">
-						        <input type="text" class="col-11" />
-						        <button type="button" class="col-1 badge btn btn-info">작성</button>
-					        </div>
-					    </div>
-					</div>
-					<ul class="list-group list-group-flush">
-						<li class="list-group-item">ㄴ <span class="me-5">대댓글 내용입니다.</span><span>작성자: <span>어드민</span></span></li>
-					</ul>
-				</li>
-			</ul>
-			<!-- //본 댓글 -->
 		</div>
 		<!-- //댓글 -->
 
 	</div>
 	
-	<script th:inline="javascript">
-		$('.summernote').summernote({
-        placeholder: '본문을 입력해주세요',
-        height: 500,
-      });
-	</script>
+	<script th:src="@{/js/board.js}"></script>
 </body>
 </html>

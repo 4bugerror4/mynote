@@ -1,7 +1,6 @@
 package com.bug.mynote.controller.api;
 
-import java.util.List;
-
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,10 +10,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bug.mynote.config.api.PrincipalDetails;
 import com.bug.mynote.domain.Note;
+import com.bug.mynote.domain.User;
 import com.bug.mynote.domain.dto.NoteSaveDto;
 import com.bug.mynote.domain.dto.NoteUpdateDto;
 import com.bug.mynote.service.NoteService;
+import com.bug.mynote.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,12 +26,7 @@ import lombok.RequiredArgsConstructor;
 public class NoteApiController {
 	
 	private final NoteService noteService;
-
-	// 전체 노트 찾기
-	@GetMapping("/notes")
-	public List<Note> notes() {
-		return noteService.getNoteAll();
-	}
+	private final UserService userService;
 	
 	// 노트 하나 찾기
 	@GetMapping("/note/{id}")
@@ -39,8 +36,11 @@ public class NoteApiController {
 	
 	// 노트 추가
 	@PostMapping("/note/save")
-	public Note save(@RequestBody NoteSaveDto dto) {
-		return noteService.save(dto.toEntity());
+	public Note save(@RequestBody NoteSaveDto dto, @AuthenticationPrincipal PrincipalDetails principal) {
+		
+		User user = userService.getUser(principal.getUser().getId());
+		
+		return noteService.save(dto.toEntity(user));
 	}
 	
 	// 노트 수정

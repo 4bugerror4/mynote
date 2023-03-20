@@ -14,18 +14,18 @@
 		<!-- 메뉴바 -->
 		<div class="list-group list-group-horizontal d-flex justify-content-end">
 			<div>
-				<a th:href="@{/normal/board/write}" class="btn btn-outline-primary">게시판 쓰기</a>
+				<a sec:authorize="isAuthenticated()" th:href="@{/normal/board/write}" class="btn btn-outline-primary">게시판 쓰기</a>
 				<a th:href="@{/}" class="btn btn-outline-primary">나의 노트</a>
-				<a th:href="@{/normal/board}" class="btn btn-outline-primary">일반 게시판</a>
-				<a th:href="@{/image/board}" class="btn btn-outline-primary">이미지 게시판</a>
+				<a th:href="@{/board/normal}" class="btn btn-outline-primary">일반 게시판</a>
+				<a th:href="@{/board/image}" class="btn btn-outline-primary">이미지 게시판</a>
 			</div>
 		</div>
 		<!-- // 메뉴바 -->
 
 		<!-- 검색 -->
-		<form class="row my-5">
+		<form class="row my-5" th:action="@{/board/normal}" method="GET">
 			<div class="col-11">
-				<input type="text" class="form-control" />
+				<input type="text" class="form-control" name="searchText" th:value="${param.searchText}" />
 			</div>
 			<div class="col-1 text-end">
 				<button type="submit" class="btn btn-outline-primary">Search</button>
@@ -45,27 +45,11 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr class="row">
-					<th class="col-1 text-center">1</th>
-					<td class="col-8"><a href="">Mark</a></td>
-					<td class="col-1 text-center">어드민</td>
-					<td class="col-1 text-center">2022-02-02</td>
-					<td class="col-1 text-center">0</td>
-				</tr>
-				
-				<tr class="row">
-					<th class="col-1 text-center">2</th>
-					<td class="col-8"><a href="">Mark</a></td>
-					<td class="col-1 text-center">어드민</td>
-					<td class="col-1 text-center">2022-02-02</td>
-					<td class="col-1 text-center">0</td>
-				</tr>
-				
-				<tr class="row">
-					<th class="col-1 text-center">3</th>
-					<td class="col-8"><a href="">Mark</a></td>
-					<td class="col-1 text-center">어드민</td>
-					<td class="col-1 text-center">2022-02-02</td>
+				<tr class="row" th:each="board : ${boards}">
+					<th class="col-1 text-center" th:text="${board.id}">1</th>
+					<td class="col-8"><a th:href="@{/normal/board/{id}(id = ${board.id})}" th:text="${board.title}">Mark</a></td>
+					<td class="col-1 text-center" th:text="${board.user.username}">어드민</td>
+					<td class="col-1 text-center" th:text="${#temporals.format(board.createdDate, 'yyyy-MM-dd')}">2022-02-02</td>
 					<td class="col-1 text-center">0</td>
 				</tr>
 			</tbody>
@@ -75,11 +59,15 @@
 		<!-- 페이지 -->
 		<nav aria-label="Page navigation example">
 			<ul class="pagination justify-content-center">
-				<li class="page-item disabled"><a class="page-link">&lsaquo;</a></li>
-				<li class="page-item"><a class="page-link" href="#">1</a></li>
-				<li class="page-item"><a class="page-link" href="#">2</a></li>
-				<li class="page-item"><a class="page-link" href="#">3</a></li>
-				<li class="page-item"><a class="page-link" href="#">&rsaquo;</a></li>
+				<li class="page-item" th:classappend="${1 == boards.pageable.pageNumber + 1} ? 'disabled'">
+					<a class="page-link" th:href="@{/board/normal/(page=${boards.pageable.pageNumber - 1}, searchText=${param.searchText})}">&lsaquo;</a>
+				</li>
+				<li class="page-item" th:classappend="${i == boards.pageable.pageNumber + 1} ? 'disabled'" th:each="i : ${#numbers.sequence(startPage, endPage)}">
+					<a class="page-link" th:href="@{/board/normal/(page=${i - 1}, searchText=${param.searchText})}" th:text="${i}">1</a>
+				</li>
+				<li class="page-item" th:classappend="${boards.totalPages == boards.pageable.pageNumber + 1} ? 'disabled'">
+					<a class="page-link" th:href="@{/board/normal/(page=${boards.pageable.pageNumber + 1}, searchText=${param.searchText})}">&rsaquo;</a>
+				</li>
 			</ul>
 		</nav>
 		<!-- //페이지 -->
@@ -87,5 +75,6 @@
 
 	<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+	<script th:src="@{/js/board.js}"></script>
 </body>
 </html>

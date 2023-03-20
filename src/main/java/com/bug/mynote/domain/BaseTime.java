@@ -3,6 +3,7 @@ package com.bug.mynote.domain;
 import java.time.LocalDateTime;
 
 import javax.persistence.EntityListeners;
+import javax.persistence.JoinColumn;
 import javax.persistence.MappedSuperclass;
 
 import org.springframework.data.annotation.CreatedDate;
@@ -16,9 +17,11 @@ import lombok.Getter;
 @Getter
 public class BaseTime {
 	
+	@JoinColumn(name = "created_date")
 	@CreatedDate
 	private LocalDateTime createdDate;
 	
+	@JoinColumn(name = "modifed_date")
 	@LastModifiedDate
 	private LocalDateTime modifiedDate;
 

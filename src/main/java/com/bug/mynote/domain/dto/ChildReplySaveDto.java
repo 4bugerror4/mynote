@@ -1,6 +1,7 @@
 package com.bug.mynote.domain.dto;
 
-import com.bug.mynote.domain.Board;
+import com.bug.mynote.domain.ChildReply;
+import com.bug.mynote.domain.Reply;
 import com.bug.mynote.domain.User;
 
 import lombok.Getter;
@@ -10,15 +11,15 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class BoardSaveDto {
+public class ChildReplySaveDto {
 	
-	private String title;
 	private String content;
+	private Long replyId;
 	
-	public Board toEntity(User user) {
-		return Board.builder()
-				.title(title)
+	public ChildReply toEntity(Reply reply, User user) {
+		return ChildReply.builder()
 				.content(content)
+				.reply(reply)
 				.user(user)
 				.build();
 	}

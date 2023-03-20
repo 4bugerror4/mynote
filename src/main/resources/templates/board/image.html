@@ -14,10 +14,10 @@
 		<!-- 메뉴바 -->
 		<div class="list-group list-group-horizontal d-flex justify-content-end">
 			<div>
-				<button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">이미지 업로드</button>
+				<button sec:authorize="isAuthenticated()" type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">이미지 업로드</button>
 				<a th:href="@{/}" class="btn btn-outline-primary">나의 노트</a>
-				<a th:href="@{/normal/board}" class="btn btn-outline-primary">일반 게시판</a>
-				<a th:href="@{/image/board}" class="btn btn-outline-primary">이미지 게시판</a>
+				<a th:href="@{/board/normal}" class="btn btn-outline-primary">일반 게시판</a>
+				<a th:href="@{/board/image}" class="btn btn-outline-primary">이미지 게시판</a>
 			</div>
 		</div>
 		<!-- // 메뉴바 -->
