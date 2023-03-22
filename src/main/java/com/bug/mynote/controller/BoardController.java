@@ -36,11 +36,6 @@ public class BoardController {
 		return "board/normal";
 	}
 	
-	@GetMapping("/board/image")
-	public String imageBoard() {
-		return "board/image";
-	}
-	
 	@GetMapping("/normal/board/write")
 	public String normalBoardWrite() {
 		return "board/write";
